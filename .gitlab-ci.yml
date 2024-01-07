@@ -1,0 +1,42 @@
+image: 
+  name: harbor.example.ru/iac/kaniko:1.11.0-debug
+  entrypoint: [""]
+
+before_script:
+  - echo $DOCKER_AUTH_CONFIG > /kaniko/.docker/config.json
+
+debian:11.7-admin:
+  stage: build
+  script:
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}/debian-11.7-admin"
+      --dockerfile "${CI_PROJECT_DIR}/debian-11.7-admin/Dockerfile"
+      --destination "harbor.example.ru/apps/debian:11.7-admin"
+  when: manual
+
+nginx:1.23-php:
+  stage: build
+  script:
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}/nginx-1.23-php"
+      --dockerfile "${CI_PROJECT_DIR}/nginx-1.23-php/Dockerfile"
+      --destination "harbor.example.ru/apps/nginx:1.23-php"
+  when: manual
+
+php:7.2-standard:
+  stage: build
+  script:
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}/php-fpm-7.2-standard"
+      --dockerfile "${CI_PROJECT_DIR}/php-fpm-7.2-standard/Dockerfile"
+      --destination "harbor.example.ru/apps/php:7.2-standard"
+  when: manual
+
+gitlab-search:
+  stage: build
+  script:
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}/gitlab-search"
+      --dockerfile "${CI_PROJECT_DIR}/gitlab-search/Dockerfile"
+      --destination "harbor.example.ru/apps/gitlab-search"
+  when: manual
